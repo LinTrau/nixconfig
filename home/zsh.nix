@@ -27,6 +27,7 @@
     initContent = ''
       [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
       export GPG_TTY=$(tty)
+      unset SSH_AUTH_SOCK
     '';
   };
 }
