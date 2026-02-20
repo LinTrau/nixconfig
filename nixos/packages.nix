@@ -18,6 +18,7 @@
     winetricks
     blesh
     xsettingsd
+    pinentry-qt
     usbutils
     quota
     rclone
