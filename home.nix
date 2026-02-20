@@ -10,7 +10,8 @@
     # 基础工具
     fastfetch
     piper
-    
+    p7zip
+
     # 应用程序
     android-tools
     qq
