@@ -5,6 +5,12 @@
   programs = {
     zsh.enable = true;
 
+    gnupg.agent = {
+      enable = true;
+      pinentryPackage = pkgs.pinentry-curses;
+      enableSSHSupport = true;
+    };
+
     direnv.enable = true;
     partition-manager.enable = true;
 
