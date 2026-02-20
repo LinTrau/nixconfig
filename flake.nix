@@ -36,6 +36,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    lazyvim-nix = {
+      url = "github:gujial/lazyvim-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     tinyMediaManager-flake = {
       url = "github:gujial/tinyMediaManager-flake";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -65,6 +70,7 @@
       zen-browser,
       cursor,
       home-manager,
+      lazyvim-nix,
       ...
     }:
     {
@@ -74,7 +80,9 @@
           specialArgs = { inherit inputs; };
           modules = [
             ./configuration.nix
-
+            
+            lazyvim-nix.nixosModules.lazyvim
+            
             home-manager.nixosModules.home-manager
             {
               home-manager.useGlobalPkgs = true;
