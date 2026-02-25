@@ -31,7 +31,7 @@
   };
 
   nixpkgs.config.allowUnfree = true;
-  nixpkgs.config.permittedInsecurePackages = [ "ventoy-qt5-1.1.07" ];
+  #  nixpkgs.config.permittedInsecurePackages = [ "ventoy-qt5-1.1.07" ];
 
   system.stateVersion = "25.05";
 }

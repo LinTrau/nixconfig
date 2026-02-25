@@ -11,7 +11,7 @@
       wqy_zenhei
       hack-font
       source-code-pro
-      jetbrains-mono
+      #jetbrains-mono
       lxgw-wenkai
       cascadia-code
     ];

@@ -1,7 +1,11 @@
 {
   description = "ROG Flake";
 
-  nixConfig.extra-experimental-features = [ "flakes" "nix-command" "pipe-operators" ];
+  nixConfig.extra-experimental-features = [
+    "flakes"
+    "nix-command"
+    "pipe-operators"
+  ];
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
@@ -80,9 +84,9 @@
           specialArgs = { inherit inputs; };
           modules = [
             ./configuration.nix
-            
+
             lazyvim-nix.nixosModules.lazyvim
-            
+
             home-manager.nixosModules.home-manager
             {
               home-manager.useGlobalPkgs = true;
@@ -112,7 +116,7 @@
               { ... }:
               {
                 environment.systemPackages = [
-                  zen-browser.packages."x86_64-linux".twilight
+                  zen-browser.packages."x86_64-linux".default
                 ];
               }
             )
@@ -123,7 +127,7 @@
               {
                 environment.systemPackages = [
                   cursor.packages.${pkgs.stdenv.hostPlatform.system}.default
-                  re3-flake.packages.${pkgs.stdenv.hostPlatform.system}.re3-vc
+                  re3-flake.packages.${pkgs.stdenv.hostPlatform.system}.reVC-Improved
                   tinyMediaManager-flake.packages.${pkgs.stdenv.hostPlatform.system}.default
                 ];
               }
@@ -140,8 +144,13 @@
                 ];
               }
             )
+
           ];
+
         };
+
       };
+
     };
+
 }

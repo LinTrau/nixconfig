@@ -5,13 +5,6 @@ _:
   services = {
     printing.enable = true;
 
-    sunshine = {
-      enable = true;
-      autoStart = false;
-      capSysAdmin = true;
-      openFirewall = true;
-    };
-
     asusd.enable = true;
     fwupd.enable = true;
     ratbagd.enable = true;

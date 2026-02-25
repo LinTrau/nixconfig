@@ -22,7 +22,6 @@
     prismlauncher
     osu-lazer-bin
     adwsteamgtk
-    ventoy-full-qt
     swaybg
     uwsm
     wlsunset
@@ -44,7 +43,6 @@
     kdePackages.filelight
     kdePackages.isoimagewriter
     kdePackages.kmousetool
-    okteta
     kdePackages.kamoso
     kdePackages.krecorder
     kdePackages.kwave

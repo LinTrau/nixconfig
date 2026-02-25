@@ -14,7 +14,7 @@
     fira-code
     lshw
     asusctl
-    wineWowPackages.waylandFull
+    wineWow64Packages.waylandFull
     winetricks
     blesh
     xsettingsd
