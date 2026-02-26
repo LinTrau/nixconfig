@@ -8,7 +8,9 @@ _:
 
     firewall = {
       enable = true;
-      trustedInterfaces = [ "Mihomo" ];
+      trustedInterfaces = [
+        "Mihomo"
+      ];
       checkReversePath = false;
     };
   };

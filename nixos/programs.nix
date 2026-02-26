@@ -65,8 +65,11 @@
         wayland
         libxkbcommon
         libxshmfence
+        pipewire
       ];
     };
+
+    virt-manager.enable = true;
   };
 
   security.soteria.enable = true;

@@ -4,7 +4,6 @@
 {
   environment.systemPackages = with pkgs; [
     vim
-    zed-editor
     wget
     gnupg
     git

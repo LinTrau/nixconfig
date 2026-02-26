@@ -44,10 +44,16 @@
       enable = true;
     };
 
-    virtualbox.host = {
-      enable = false;
-      enableExtensionPack = true;
+    libvirtd = {
+      enable = true;
+      qemu = {
+        package = pkgs.qemu_kvm;
+        runAsRoot = true;
+        swtpm.enable = true;
+        vhostUserPackages = [ pkgs.virtiofsd ];
+      };
     };
+
   };
 
   users.extraGroups.vboxusers.members = [ "scil" ];

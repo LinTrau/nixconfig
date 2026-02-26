@@ -27,8 +27,11 @@
     wlsunset
     file-roller
     brightnessctl
+    protonplus
+    splayer
 
     julia-bin
+    python3
     conda
 
     # 主题
