@@ -1,5 +1,5 @@
 # 系统服务配置
-_:
+{ pkgs, ... }:
 
 {
   services = {
@@ -20,11 +20,5 @@ _:
       nssmdns4 = true;
       openFirewall = true;
     };
-
-    # ollama = {
-    #   enable = true;
-    #   loadModels = ["gpt-oss:20b" "deepseek-r1:32b" "gemma3:27b"];
-    #   package = pkgs.ollama-cuda;
-    # };
   };
 }

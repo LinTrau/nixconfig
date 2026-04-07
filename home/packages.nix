@@ -14,8 +14,6 @@
     wechat
     obs-studio
     mpv
-    libreoffice-qt6-fresh
-    projectlibre
     telegram-desktop
     tmux
     gimp
@@ -29,6 +27,9 @@
     brightnessctl
     protonplus
     splayer
+    wemeet
+    blender
+    bitwig-studio3
 
     julia-bin
     python3

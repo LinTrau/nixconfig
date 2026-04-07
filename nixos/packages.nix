@@ -7,7 +7,7 @@
     wget
     gnupg
     git
-    unrar_6
+    unrar
     nvtopPackages.nvidia
     noto-fonts
     fira-code
@@ -21,6 +21,7 @@
     usbutils
     quota
     rclone
+    onlyoffice-desktopeditors
 
     (writeShellScriptBin "nvidia-offload" ''
       #!/usr/bin/env bash
