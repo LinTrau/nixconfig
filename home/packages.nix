@@ -1,5 +1,5 @@
 # Home Manager 用户软件包
-{ pkgs, ... }:
+{ pkgs, inputs, ... }:
 
 {
   home.packages = with pkgs; [
@@ -30,10 +30,9 @@
     wemeet
     blender
     bitwig-studio3
-
-    julia-bin
-    python3
-    conda
+    scilab-bin
+    #openfoam paraview
+    freecad
 
     # 主题
     sweet

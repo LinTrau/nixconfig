@@ -9,6 +9,7 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    # nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.11";
 
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -52,21 +53,14 @@
 
     nixpkgs-wayland.url = "github:nix-community/nixpkgs-wayland";
 
-    nix-matlab = {
-      url = "gitlab:doronbehar/nix-matlab";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    ghostty.url = "github:ghostty-org/ghostty";
     nixGL.url = "github:nix-community/nixGL";
-
-    caelestia-cli.url = "github:caelestia-dots/cli";
-    hexecute.url = "github:ThatOtherAndrew/Hexecute";
   };
 
   outputs =
     inputs@{
+      self,
       nixpkgs,
+      # nixpkgs-stable,
       lanzaboote,
       nur,
       re3-flake,

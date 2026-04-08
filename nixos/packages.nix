@@ -21,7 +21,8 @@
     usbutils
     quota
     rclone
-    onlyoffice-desktopeditors
+    wpsoffice-cn
+    distrobox
 
     (writeShellScriptBin "nvidia-offload" ''
       #!/usr/bin/env bash
