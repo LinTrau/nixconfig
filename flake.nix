@@ -77,7 +77,7 @@
           modules = [
             ./configuration.nix
 
-            openmodelica-nix.nixosModules.default
+            #openmodelica-nix.nixosModules.default
 
             lazyvim-nix.nixosModules.lazyvim
 
