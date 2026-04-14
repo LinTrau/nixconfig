@@ -36,6 +36,8 @@
 
     gamemode.enable = true;
 
+    #openmodelica.enable = true;
+
     steam = {
       enable = true;
       remotePlay.openFirewall = true;

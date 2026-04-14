@@ -1,6 +1,5 @@
 # Home Manager 用户软件包
-{ pkgs, inputs, ... }:
-
+{ pkgs, ... }:
 {
   home.packages = with pkgs; [
     # 基础工具

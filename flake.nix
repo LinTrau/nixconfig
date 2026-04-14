@@ -9,7 +9,6 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    # nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.11";
 
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -36,11 +35,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    re3-flake = {
-      url = "github:gujial/re3-flake";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     lazyvim-nix = {
       url = "github:gujial/lazyvim-nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -51,6 +45,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    #openmodelica-nix = {
+    # url = "github:LinTrau/openmodelica-nix";
+    #  inputs.nixpkgs.follows = "nixpkgs";
+    #};
+
     nixpkgs-wayland.url = "github:nix-community/nixpkgs-wayland";
 
     nixGL.url = "github:nix-community/nixGL";
@@ -60,15 +59,14 @@
     inputs@{
       self,
       nixpkgs,
-      # nixpkgs-stable,
       lanzaboote,
       nur,
-      re3-flake,
       tinyMediaManager-flake,
       zen-browser,
       cursor,
       home-manager,
       lazyvim-nix,
+      #openmodelica-nix,
       ...
     }:
     {
@@ -78,6 +76,8 @@
           specialArgs = { inherit inputs; };
           modules = [
             ./configuration.nix
+
+            openmodelica-nix.nixosModules.default
 
             lazyvim-nix.nixosModules.lazyvim
 
@@ -95,9 +95,7 @@
               { pkgs, lib, ... }:
               {
                 environment.systemPackages = [ pkgs.sbctl ];
-
                 boot.loader.systemd-boot.enable = lib.mkForce false;
-
                 boot.lanzaboote = {
                   enable = true;
                   pkiBundle = "/var/lib/sbctl";
@@ -105,24 +103,14 @@
               }
             )
 
-            # Zen Browser
-            (
-              { ... }:
-              {
-                environment.systemPackages = [
-                  zen-browser.packages."x86_64-linux".default
-                ];
-              }
-            )
-
             # 外部 flake 软件包
             (
-              { pkgs, ... }:
+              { pkgs, system, ... }:
               {
                 environment.systemPackages = [
                   cursor.packages.${pkgs.stdenv.hostPlatform.system}.default
-                  re3-flake.packages.${pkgs.stdenv.hostPlatform.system}.reVC-Improved
                   tinyMediaManager-flake.packages.${pkgs.stdenv.hostPlatform.system}.default
+                  zen-browser.packages."x86_64-linux".default
                 ];
               }
             )
