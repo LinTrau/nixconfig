@@ -21,6 +21,13 @@
       openFirewall = true;
     };
 
+    zerotierone = {
+      enable = true;
+      joinNetworks = [
+        "3b19b3a716aaad96"
+      ];
+    };
+
     flatpak.enable = true;
   };
 }

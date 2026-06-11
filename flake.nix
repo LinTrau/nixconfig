@@ -30,11 +30,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    cursor = {
-      url = "github:omarcresp/cursor-flake/main";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     lazyvim-nix = {
       url = "github:gujial/lazyvim-nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -44,11 +39,6 @@
       url = "github:gujial/tinyMediaManager-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    #openmodelica-nix = {
-    # url = "github:LinTrau/openmodelica-nix";
-    #  inputs.nixpkgs.follows = "nixpkgs";
-    #};
 
     nixpkgs-wayland.url = "github:nix-community/nixpkgs-wayland";
 
@@ -63,10 +53,8 @@
       nur,
       tinyMediaManager-flake,
       zen-browser,
-      cursor,
       home-manager,
       lazyvim-nix,
-      #openmodelica-nix,
       ...
     }:
     {
@@ -76,8 +64,6 @@
           specialArgs = { inherit inputs; };
           modules = [
             ./configuration.nix
-
-            #openmodelica-nix.nixosModules.default
 
             lazyvim-nix.nixosModules.lazyvim
 
@@ -108,7 +94,6 @@
               { pkgs, system, ... }:
               {
                 environment.systemPackages = [
-                  cursor.packages.${pkgs.stdenv.hostPlatform.system}.default
                   tinyMediaManager-flake.packages.${pkgs.stdenv.hostPlatform.system}.default
                   zen-browser.packages."x86_64-linux".default
                 ];

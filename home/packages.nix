@@ -25,13 +25,15 @@
     file-roller
     brightnessctl
     protonplus
-    splayer
+    #splayer
     wemeet
     blender
     bitwig-studio3
     scilab-bin
     #openfoam paraview
     freecad
+    teamspeak6-client
+    element-desktop
 
     # 主题
     sweet

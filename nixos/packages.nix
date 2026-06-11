@@ -21,7 +21,6 @@
     usbutils
     quota
     rclone
-    wpsoffice-cn
     distrobox
 
     (writeShellScriptBin "nvidia-offload" ''

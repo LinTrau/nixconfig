@@ -30,7 +30,11 @@
     auto-optimise-store = true;
   };
 
-  nixpkgs.config.allowUnfree = true;
+  nixpkgs.config = {
+    allowUnfree = true;
+    permittedInsecurePackages = [
+    ];
+  };
 
   system.stateVersion = "25.05";
 
