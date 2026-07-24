@@ -25,15 +25,15 @@
     file-roller
     brightnessctl
     protonplus
-    #splayer
+    splayer
     wemeet
-    blender
     bitwig-studio3
     scilab-bin
     #openfoam paraview
-    freecad
+    #freecad
     teamspeak6-client
     element-desktop
+    scrcpy
 
     # 主题
     sweet
@@ -58,4 +58,10 @@
     kdePackages.kpat
     kdePackages.discover
   ];
+
+  home.sessionVariables = {
+    LD_LIBRARY_PATH = /run/current-system/sw/share/nix-ld/lib;
+    JAVA_HOME = "${pkgs.jdk}";
+  };
+
 }

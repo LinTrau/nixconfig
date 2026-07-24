@@ -21,11 +21,10 @@
       openFirewall = true;
     };
 
-    zerotierone = {
+    mihomo = {
       enable = true;
-      joinNetworks = [
-        "3b19b3a716aaad96"
-      ];
+      configFile = "/home/scil/Scil/config.yaml";
+      tunMode = true;
     };
 
     flatpak.enable = true;

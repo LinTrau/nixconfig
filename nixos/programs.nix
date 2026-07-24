@@ -28,12 +28,6 @@
     xwayland.enable = true;
     kdeconnect.enable = true;
 
-    clash-verge = {
-      enable = true;
-      autoStart = true;
-      serviceMode = true;
-    };
-
     gamemode.enable = true;
 
     steam = {
@@ -60,6 +54,9 @@
         fribidi
         gobject-introspection
         libGL
+        libGLU
+        libx11
+        libxext
         stdenv.cc.cc.lib
         graphene
         wayland
