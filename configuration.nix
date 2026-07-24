@@ -20,6 +20,11 @@
     ./nixos/services.nix
     ./nixos/plasma.nix
     ./nixos/packages.nix
+    ./nixos/niri.nix
+  ];
+
+  nixpkgs.overlays = [
+    (import ./overlays/niri-glass.nix) # 新增：注册液态玻璃版 niri
   ];
 
   nix.settings = {
@@ -33,6 +38,7 @@
   nixpkgs.config = {
     allowUnfree = true;
     permittedInsecurePackages = [
+      "electron-39.8.10"
     ];
   };
 

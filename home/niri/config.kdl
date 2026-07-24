@@ -1,0 +1,118 @@
+// home/niri/config.kdl
+// 磁带未来主义 (Cassette Futurism) 主题
+// 配色参考：CRT 琥珀 #E8A33D / 录音带棕 #241C16 / 铬灰 #8A8580 / 警示红 #D1453C
+// 结构参考 NyxNiri 的键位分组（窗口/系统），液态玻璃参数抄自 zaroutt/Niri-glass README
+
+input {
+    keyboard {
+        xkb {
+            layout "us"
+        }
+    }
+    touchpad {
+        tap
+        natural-scroll
+    }
+}
+
+output "eDP-1" {
+    scale 1.0
+}
+
+layout {
+    gaps 10
+    center-focused-column "never"
+
+    // 磁带未来主义偏方正、少圆角，只留极小倒角模拟老式塑料机壳
+    default-column-width { proportion 0.5; }
+
+    focus-ring {
+        width 3
+        active-color "#E8A33D"   // CRT 琥珀
+        inactive-color "#3A2C23" // 暗录音带棕
+    }
+
+    border {
+        off
+    }
+
+    shadow {
+        on
+        softness 30
+        spread 4
+        offset x=0 y=6
+        color "#00000090"
+    }
+
+    struts {
+        left 8
+        right 8
+        top 8
+        bottom 8
+    }
+}
+
+prefer-no-csd
+
+// ---------- 液态玻璃：整体窗口背景效果 ----------
+// 参数取自 Niri-glass README 里作者验证过最顺眼的一组
+window-rule {
+    geometry-corner-radius 6  // 磁带机壳倒角的分寸感：摸得到但不抢眼，别做成现代 UI 那种大圆角
+    clip-to-geometry true
+
+    background-effect {
+        blur true
+        xray true
+        liquid-glass {
+            refraction-strength 3.0
+            power-factor 10
+            refraction-power 1.0
+        }
+    }
+}
+
+// 面板类窗口（waybar/通知中心）额外做玻璃处理，呼应 NyxNiri 用玻璃效果罩住状态栏的做法
+layer-rule {
+    match namespace="^waybar$"
+    background-effect {
+        blur true
+        xray true
+        liquid-glass {
+            refraction-strength 2.0
+            power-factor 8
+            refraction-power 1.0
+        }
+    }
+}
+
+// ---------- 键位：沿用 NyxNiri 的分组习惯，工具换成 Nix 生态里更常见的等价物 ----------
+binds {
+    // 窗口 & 布局
+    Mod+Return { spawn "kitty"; }
+    Mod+Q { close-window; }
+    Mod+Tab { toggle-overview; }
+    Mod+H { focus-column-left; }
+    Mod+L { focus-column-right; }
+    Mod+J { focus-window-down; }
+    Mod+K { focus-window-up; }
+    Mod+Shift+H { move-column-left; }
+    Mod+Shift+L { move-column-right; }
+    Mod+F { maximize-column; }
+    Mod+Shift+F { fullscreen-window; }
+
+    // 系统 & 桌面（NyxNiri 用 Noctalia 提供，这里用等价的独立小工具）
+    Mod+R { spawn "fuzzel"; }                       // 应用启动器
+    Mod+E { spawn "nautilus"; }                     // 文件管理器
+    Mod+V { spawn "sh" "-c" "cliphist list | fuzzel --dmenu | cliphist decode | wl-copy"; }
+    Mod+X { spawn "wlogout"; }                       // 会话/电源菜单
+    Mod+Shift+S { spawn "sh" "-c" "grim -g \"$(slurp)\" - | wl-copy"; } // 截图到剪贴板
+
+    Mod+1 { focus-workspace 1; }
+    Mod+2 { focus-workspace 2; }
+    Mod+3 { focus-workspace 3; }
+    Mod+4 { focus-workspace 4; }
+}
+
+spawn-at-startup "waybar"
+spawn-at-startup "swaync"
+spawn-at-startup "swaybg" "-i" "~/Pictures/wallpapers/cassette-futurism.jpg" "-m" "fill"

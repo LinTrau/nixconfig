@@ -9,6 +9,8 @@
     ./home/git.nix
     ./home/zsh.nix
     ./home/yakuake.nix
+    ./home/niri # 新增，会自动带上 waybar 和 fuzzel
+    ./home/kitty.nix
   ];
 
   home = {
