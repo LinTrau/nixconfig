@@ -1,32 +1,57 @@
-/* home/wlogout/style.css
- * 配色沿用整套主题：录音带棕背景 / CRT 琥珀高亮 / 铬灰边框 / 警示红用于关机这类不可逆操作
+/* home/waybar/style.css
+ * 磁带未来主义配色表：
+ *   背景棕   #241C16
+ *   面板玻璃 rgba(58,45,35,0.55)  -- 实际透光效果由 niri 的 layer-rule liquid-glass 提供，
+ *                                    这里的半透明只是 CSS 兜底，避免没编译 niri-glass 时面板全透明看不清
+ *   CRT 琥珀 #E8A33D  -- 主强调色，对应活动状态/高亮
+ *   警示红   #D1453C  -- 电量低/网络断开等警告
+ *   铬灰边框 #8A8580
+ *   米白文字 #F0E6D2
  */
 
 * {
     font-family: "JetBrainsMono Nerd Font", "Noto Sans CJK SC", monospace;
-    background-image: none; /* 不依赖图标资源，用色块 + 文字，避免缺图标包报错 */
+    font-size: 13px;
+    border: none;
+    border-radius: 0; /* 内部元素保持方正，圆角只留给整体面板边缘 */
 }
 
-window {
-    background-color: rgba(36, 28, 22, 0.65); /* 呼应 niri liquid-glass 的半透明棕 */
-}
-
-button {
+window#waybar {
+    background: rgba(36, 28, 22, 0.55);
+    border-bottom: 2px solid #8A8580;
+    border-radius: 6px; /* 和 niri config.kdl 里的 geometry-corner-radius 对齐，含蓄的机壳倒角 */
     color: #F0E6D2;
-    background-color: rgba(58, 45, 35, 0.75);
-    border: 2px solid #8A8580;
-    border-radius: 6px; /* 跟窗口圆角、waybar 面板圆角保持一致的分寸感 */
-    margin: 14px;
-    font-size: 16px;
 }
 
-button:focus, button:active, button:hover {
-    background-color: rgba(232, 163, 61, 0.25); /* CRT 琥珀高亮 */
-    border-color: #E8A33D;
-    outline-style: none;
+#workspaces button {
+    padding: 0 10px;
+    color: #8A8580;
+    background: transparent;
+    border-bottom: 3px solid transparent;
 }
 
-#shutdown:hover, #shutdown:focus {
-    background-color: rgba(209, 69, 60, 0.3); /* 关机用警示红，跟其它操作区分开 */
-    border-color: #D1453C;
+#workspaces button.active {
+    color: #E8A33D;
+    border-bottom: 3px solid #E8A33D;
+}
+
+#clock {
+    color: #E8A33D;
+    font-weight: bold;
+    letter-spacing: 2px; /* 数码管间距感 */
+    padding: 0 12px;
+}
+
+#battery, #network, #pulseaudio, #tray {
+    padding: 0 10px;
+    color: #F0E6D2;
+}
+
+#battery.warning {
+    color: #D1453C;
+}
+
+#battery.critical {
+    color: #D1453C;
+    background: rgba(209, 69, 60, 0.25);
 }
