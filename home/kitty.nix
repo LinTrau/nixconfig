@@ -1,11 +1,15 @@
 # home/kitty.nix
-{ ... }:
+{ pkgs, ... }:
 
 {
+  home.packages = [
+    pkgs.nerd-fonts.jetbrains-mono # 提供 kitty/fuzzel/waybar 用的等宽字体，缺了会静默回退成 CJK 字体导致排版错乱
+  ];
+
   programs.kitty = {
     enable = true;
     font = {
-      name = "JetBrains Mono";
+      name = "JetBrainsMono Nerd Font";
       size = 12;
     };
     settings = {

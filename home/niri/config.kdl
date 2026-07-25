@@ -85,34 +85,96 @@ layer-rule {
     }
 }
 
-// ---------- 键位：沿用 NyxNiri 的分组习惯，工具换成 Nix 生态里更常见的等价物 ----------
+// ---------- 键位：改回 niri 官方默认套件，只把示例程序换成实际装的 ----------
 binds {
-    // 窗口 & 布局
-    Mod+Return { spawn "kitty"; }
-    Mod+Q { close-window; }
-    Mod+Tab { toggle-overview; }
+    Mod+Shift+Slash { show-hotkey-overlay; }
+
+    Mod+Return hotkey-overlay-title="Open a Terminal: kitty" { spawn "kitty"; }
+    Mod+D hotkey-overlay-title="Run an Application: fuzzel" { spawn "fuzzel"; }
+    Super+Alt+L hotkey-overlay-title="Lock the Screen: swaylock" { spawn "swaylock"; }
+
+    Mod+E { spawn "nautilus"; }
+    Mod+Y hotkey-overlay-title="Clipboard History: cliphist" { spawn "sh" "-c" "cliphist list | fuzzel --dmenu | cliphist decode | wl-copy"; }
+    Mod+X { spawn "wlogout"; }
+
+    Mod+O repeat=false { toggle-overview; }
+    Mod+Q repeat=false { close-window; }
+
+    Mod+Left { focus-column-left; }
+    Mod+Down { focus-window-down; }
+    Mod+Up { focus-window-up; }
+    Mod+Right { focus-column-right; }
     Mod+H { focus-column-left; }
-    Mod+L { focus-column-right; }
     Mod+J { focus-window-down; }
     Mod+K { focus-window-up; }
-    Mod+Shift+H { move-column-left; }
-    Mod+Shift+L { move-column-right; }
-    Mod+F { maximize-column; }
-    Mod+Shift+F { fullscreen-window; }
+    Mod+L { focus-column-right; }
 
-    // 系统 & 桌面（NyxNiri 用 Noctalia 提供，这里用等价的独立小工具）
-    Mod+R { spawn "fuzzel"; }                       // 应用启动器
-    Mod+E { spawn "nautilus"; }                     // 文件管理器
-    Mod+V { spawn "sh" "-c" "cliphist list | fuzzel --dmenu | cliphist decode | wl-copy"; }
-    Mod+X { spawn "wlogout"; }                       // 会话/电源菜单
-    Mod+Shift+S { spawn "sh" "-c" "grim -g \"$(slurp)\" - | wl-copy"; } // 截图到剪贴板
+    Mod+Ctrl+Left { move-column-left; }
+    Mod+Ctrl+Down { move-window-down; }
+    Mod+Ctrl+Up { move-window-up; }
+    Mod+Ctrl+Right { move-column-right; }
+    Mod+Ctrl+H { move-column-left; }
+    Mod+Ctrl+J { move-window-down; }
+    Mod+Ctrl+K { move-window-up; }
+    Mod+Ctrl+L { move-column-right; }
+
+    Mod+Home { focus-column-first; }
+    Mod+End { focus-column-last; }
+
+    Mod+Shift+Left { focus-monitor-left; }
+    Mod+Shift+Down { focus-monitor-down; }
+    Mod+Shift+Up { focus-monitor-up; }
+    Mod+Shift+Right { focus-monitor-right; }
+
+    Mod+Page_Down { focus-workspace-down; }
+    Mod+Page_Up { focus-workspace-up; }
+    Mod+U { focus-workspace-down; }
+    Mod+I { focus-workspace-up; }
+    Mod+Ctrl+Page_Down { move-column-to-workspace-down; }
+    Mod+Ctrl+Page_Up { move-column-to-workspace-up; }
 
     Mod+1 { focus-workspace 1; }
     Mod+2 { focus-workspace 2; }
     Mod+3 { focus-workspace 3; }
     Mod+4 { focus-workspace 4; }
+    Mod+Ctrl+1 { move-column-to-workspace 1; }
+    Mod+Ctrl+2 { move-column-to-workspace 2; }
+    Mod+Ctrl+3 { move-column-to-workspace 3; }
+    Mod+Ctrl+4 { move-column-to-workspace 4; }
+
+    Mod+BracketLeft { consume-or-expel-window-left; }
+    Mod+BracketRight { consume-or-expel-window-right; }
+    Mod+Comma { consume-window-into-column; }
+    Mod+Period { expel-window-from-column; }
+
+    Mod+R { switch-preset-column-width; }
+    Mod+Shift+R { switch-preset-column-width-back; }
+    Mod+F { maximize-column; }
+    Mod+Shift+F { fullscreen-window; }
+    Mod+M { maximize-window-to-edges; }
+    Mod+C { center-column; }
+
+    Mod+Minus { set-column-width "-10%"; }
+    Mod+Equal { set-column-width "+10%"; }
+
+    Mod+V { toggle-window-floating; }
+    Mod+Shift+V { switch-focus-between-floating-and-tiling; }
+
+    Print { screenshot; }
+    Ctrl+Print { screenshot-screen; }
+    Alt+Print { screenshot-window; }
+    Mod+Shift+S hotkey-overlay-title="Screenshot to Clipboard: grim+slurp" { spawn "sh" "-c" r#"grim -g "$(slurp)" - | wl-copy"#; }
+
+    // 逃生舱：某些应用会请求 niri 停止拦截快捷键，全按键失灵时按这个恢复
+    Mod+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
+
+    // 退出 / 强制退出，之前的版本漏了这两个，卡住时连退出键都没有
+    Mod+Shift+E { quit; }
+    Ctrl+Alt+Delete { quit; }
 }
 
 spawn-at-startup "waybar"
 spawn-at-startup "swaync"
-spawn-at-startup "swaybg" "-i" "~/Pictures/wallpapers/cassette-futurism.jpg" "-m" "fill"
+spawn-sh-at-startup "wl-paste --type text --watch cliphist store" // 监听文本剪贴板写入历史，Mod+Y 才有内容可选
+spawn-sh-at-startup "wl-paste --type image --watch cliphist store" // 图片剪贴板同理
+spawn-sh-at-startup "swaybg -i ~/Pictures/wallpapers/cassette-futurism.jpg -m fill" // 若壁纸放在别处，把这个路径换成实际路径

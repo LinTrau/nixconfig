@@ -16,5 +16,6 @@
   imports = [
     ../waybar
     ../fuzzel
+    ../wlogout
   ];
 }

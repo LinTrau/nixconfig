@@ -6,7 +6,7 @@
     enable = true;
     settings = {
       main = {
-        font = "JetBrains Mono:size=12";
+        font = "JetBrainsMono Nerd Font:size=12";
         terminal = "kitty";
         layer = "overlay";
         width = 40;
