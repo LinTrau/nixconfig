@@ -12,7 +12,7 @@
     swaylock # 锁屏（Super+Alt+L）
     swaynotificationcenter # 通知中心
     swaybg # 静态壁纸兜底
-    swww # 支持转场动画的壁纸（可选）
+    awww # 支持转场动画的壁纸（可选）
     wl-clipboard
     cliphist # 剪贴板历史（对应 Super+V）
     grim
