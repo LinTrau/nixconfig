@@ -1,27 +1,27 @@
   {
     "label": "lock",
     "action": "swaylock",
-    "text": "锁屏",
+    "text": "󰌾",
     "keybind": "l"
   }
 
   {
     "label": "logout",
     "action": "niri msg action quit",
-    "text": "注销",
+    "text": "󰍃",
     "keybind": "e"
   }
 
   {
     "label": "reboot",
     "action": "systemctl reboot",
-    "text": "重启",
+    "text": "󰜉",
     "keybind": "r"
   }
 
   {
     "label": "shutdown",
     "action": "systemctl poweroff",
-    "text": "关机",
+    "text": "󰐥",
     "keybind": "s"
   }
