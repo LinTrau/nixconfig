@@ -177,4 +177,4 @@ spawn-at-startup "waybar"
 spawn-at-startup "swaync"
 spawn-sh-at-startup "wl-paste --type text --watch cliphist store" // 监听文本剪贴板写入历史，Mod+Y 才有内容可选
 spawn-sh-at-startup "wl-paste --type image --watch cliphist store" // 图片剪贴板同理
-spawn-sh-at-startup "swaybg -i ~/Pictures/wallpapers/cassette-futurism.jpg -m fill" // 若壁纸放在别处，把这个路径换成实际路径
+spawn-sh-at-startup "swaybg -i /home/scil/cassette-futurism.jpg -m fill" // 若壁纸放在别处，把这个路径换成实际路径

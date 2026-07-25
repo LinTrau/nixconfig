@@ -8,6 +8,7 @@
   # 用 overlays/niri-glass.nix 提供的 niri-glass 包替换默认会话二进制
   environment.systemPackages = with pkgs; [
     niri-glass
+    xwayland-satellite
     fuzzel # 应用启动器（对应 NyxNiri 里 Super+R）
     swaylock # 锁屏（Super+Alt+L）
     swaynotificationcenter # 通知中心
