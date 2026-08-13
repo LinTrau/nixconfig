@@ -22,6 +22,7 @@
     quota
     rclone
     distrobox
+    python3
 
     (writeShellScriptBin "nvidia-offload" ''
       #!/usr/bin/env bash

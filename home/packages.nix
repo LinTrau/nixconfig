@@ -29,11 +29,13 @@
     wemeet
     bitwig-studio3
     scilab-bin
-    #openfoam paraview
+    #openfoam-org
+    paraview
     #freecad
     teamspeak6-client
     element-desktop
     scrcpy
+    thunderbird
 
     # 主题
     sweet

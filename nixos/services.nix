@@ -28,5 +28,7 @@
     };
 
     flatpak.enable = true;
+
+    envfs.enable = true;
   };
 }
