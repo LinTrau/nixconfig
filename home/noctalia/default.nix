@@ -43,9 +43,21 @@
           radius = 6; # 机壳倒角，同原 waybar border-radius 6px
           margin_ends = 8;
           margin_edge = 8;
-          start = [ "launcher" "workspaces" ];
+          start = [
+            "launcher"
+            "workspaces"
+          ];
           center = [ "clock" ];
-          end = [ "volume" "network" "battery" "tray" "notifications" "control-center" "session" ];
+          end = [
+            "volume"
+            "media"
+            "network"
+            "battery"
+            "tray"
+            "notifications"
+            "control-center"
+            "session"
+          ];
         };
       };
 

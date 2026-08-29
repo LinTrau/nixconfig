@@ -54,6 +54,10 @@ layout {
 
 prefer-no-csd
 
+hotkey-overlay {
+    skip-at-startup; // 启动时不要自动弹出快捷键帮助菜单
+}
+
 // ---------- 液态玻璃：整体窗口背景效果 ----------
 // 参数取自 Niri-glass README 里作者验证过最顺眼的一组
 window-rule {

@@ -1,5 +1,5 @@
-# Home Manager 配置入口
-# 各功能模块位于 ./home/ 目录下
+# Home Manager 配置入口（本文件必须放在仓库根目录，flake.nix 里用 `import ./home.nix` 引用它）
+# 各功能子模块位于 ./home/ 目录下
 
 { inputs, ... }:
 

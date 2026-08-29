@@ -35,7 +35,6 @@
     element-desktop
     scrcpy
     thunderbird
-    mpris
 
     # 主题
 
