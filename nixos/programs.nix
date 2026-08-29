@@ -14,12 +14,6 @@
     direnv.enable = true;
     partition-manager.enable = true;
 
-    kde-pim = {
-      enable = true;
-      kmail = true;
-      kontact = true;
-    };
-
     appimage = {
       enable = true;
       binfmt = true;

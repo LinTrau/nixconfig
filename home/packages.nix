@@ -35,12 +35,11 @@
     element-desktop
     scrcpy
     thunderbird
+    onlyoffice-desktopeditors
 
     # 主题
 
-    # KDE 应用
-    kdePackages.yakuake
-    kdePackages.spectacle
+    # KDE 应用（已删：yakuake / spectacle / kpat / discover）
     kdePackages.kdenlive
     kdePackages.kcalc
     kdePackages.filelight
@@ -54,8 +53,6 @@
     kdePackages.sweeper
     kdePackages.ksystemlog
     kdePackages.sddm-kcm
-    kdePackages.kpat
-    kdePackages.discover
   ];
 
   home.sessionVariables = {

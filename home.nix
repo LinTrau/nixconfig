@@ -10,9 +10,9 @@
     ./home/packages.nix
     ./home/git.nix
     ./home/zsh.nix
-    ./home/yakuake.nix
     ./home/niri # 顶栏/启动器/通知/会话/壁纸/锁屏统一由 noctalia 提供
     ./home/kitty.nix
+    ./home/onlyoffice.nix # OnlyOffice 字体软链到 ~/.local/share/fonts
   ];
 
   home = {
