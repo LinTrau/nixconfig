@@ -43,6 +43,17 @@
     nixpkgs-wayland.url = "github:nix-community/nixpkgs-wayland";
 
     nixGL.url = "github:nix-community/nixGL";
+
+    dsh-nix = {
+      url = "github:tsx8/dsh-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    noctalia = {
+      url = "github:noctalia-dev/noctalia";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
   };
 
   outputs =
@@ -55,6 +66,7 @@
       zen-browser,
       home-manager,
       lazyvim-nix,
+      dsh-nix,
       ...
     }:
     {
@@ -96,6 +108,8 @@
                 environment.systemPackages = [
                   tinyMediaManager-flake.packages.${pkgs.stdenv.hostPlatform.system}.default
                   zen-browser.packages."x86_64-linux".default
+                  inputs.dsh-nix.packages.${pkgs.stdenv.hostPlatform.system}.deepseek-harness
+
                 ];
               }
             )

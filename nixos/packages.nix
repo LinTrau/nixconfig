@@ -23,6 +23,7 @@
     rclone
     distrobox
     python3
+    nodejs
 
     (writeShellScriptBin "nvidia-offload" ''
       #!/usr/bin/env bash
@@ -32,5 +33,6 @@
       export __VK_LAYER_NV_optimus=NVIDIA_only
       exec "$@"
     '')
+
   ];
 }

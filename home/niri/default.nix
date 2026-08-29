@@ -7,15 +7,12 @@
   home.packages = with pkgs; [
     kitty
     nautilus
-    wlogout
   ];
 
   xdg.configFile."niri/config.kdl".source = ./config.kdl;
 
-  # waybar / fuzzel 的配置放在各自模块里，见 home/waybar.nix、home/fuzzel.nix
+  # 顶栏/启动器/通知/会话菜单/壁纸/锁屏统一交给 noctalia，见 home/noctalia/default.nix
   imports = [
-    ../waybar
-    ../fuzzel
-    ../wlogout
+    ../noctalia
   ];
 }

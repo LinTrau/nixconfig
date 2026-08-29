@@ -71,9 +71,22 @@ window-rule {
     }
 }
 
-// 面板类窗口（waybar/通知中心）额外做玻璃处理，呼应 NyxNiri 用玻璃效果罩住状态栏的做法
+// noctalia 设置窗口：浮动并给一个合适的尺寸，避免被平铺逻辑挤坏
+window-rule {
+    match app-id="dev.noctalia.Noctalia"
+    open-floating true
+    default-column-width { fixed 1080; }
+    default-window-height { fixed 920; }
+}
+
+debug {
+    // 允许 noctalia 的通知按钮 / 窗口激活生效
+    honor-xdg-activation-with-invalid-serial
+}
+
+// 面板类窗口（noctalia 顶栏/通知/面板/OSD）额外做玻璃处理，沿用之前给 waybar 罩状态栏的做法
 layer-rule {
-    match namespace="^waybar$"
+    match namespace="^noctalia-(bar-[^ ]+|notification|dock|panel|attached-panel|osd)$"
     background-effect {
         blur true
         xray true
@@ -90,12 +103,12 @@ binds {
     Mod+Shift+Slash { show-hotkey-overlay; }
 
     Mod+Return hotkey-overlay-title="Open a Terminal: kitty" { spawn "kitty"; }
-    Mod+D hotkey-overlay-title="Run an Application: fuzzel" { spawn "fuzzel"; }
-    Super+Alt+L hotkey-overlay-title="Lock the Screen: swaylock" { spawn "swaylock"; }
+    Mod+D hotkey-overlay-title="Run an Application: noctalia launcher" { spawn-sh "noctalia msg panel-toggle launcher"; }
+    Super+Alt+L hotkey-overlay-title="Lock the Screen" { spawn-sh "noctalia msg session lock"; }
 
     Mod+E { spawn "nautilus"; }
-    Mod+Y hotkey-overlay-title="Clipboard History: cliphist" { spawn "sh" "-c" "cliphist list | fuzzel --dmenu | cliphist decode | wl-copy"; }
-    Mod+X { spawn "wlogout"; }
+    Mod+Y hotkey-overlay-title="Clipboard History" { spawn-sh "noctalia msg panel-toggle clipboard"; }
+    Mod+X { spawn-sh "noctalia msg panel-toggle session"; }
 
     Mod+O repeat=false { toggle-overview; }
     Mod+Q repeat=false { close-window; }
@@ -173,8 +186,4 @@ binds {
     Ctrl+Alt+Delete { quit; }
 }
 
-spawn-at-startup "waybar"
-spawn-at-startup "swaync"
-spawn-sh-at-startup "wl-paste --type text --watch cliphist store" // 监听文本剪贴板写入历史，Mod+Y 才有内容可选
-spawn-sh-at-startup "wl-paste --type image --watch cliphist store" // 图片剪贴板同理
-spawn-sh-at-startup "swaybg -i /home/scil/cassette-futurism.jpg -m fill" // 若壁纸放在别处，把这个路径换成实际路径
+spawn-at-startup "noctalia" // 顶栏 + 通知 + 壁纸 + 锁屏 + 剪贴板，取代 waybar/swaync/swaybg/cliphist

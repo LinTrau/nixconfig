@@ -9,13 +9,8 @@
   environment.systemPackages = with pkgs; [
     niri-glass
     xwayland-satellite
-    fuzzel # 应用启动器（对应 NyxNiri 里 Super+R）
-    swaylock # 锁屏（Super+Alt+L）
-    swaynotificationcenter # 通知中心
-    swaybg # 静态壁纸兜底
-    awww # 支持转场动画的壁纸（可选）
-    wl-clipboard
-    cliphist # 剪贴板历史（对应 Super+V）
+    # 启动器 / 通知 / 壁纸 / 锁屏 / 剪贴板统一由 noctalia 提供（见 home/noctalia）
+    wl-clipboard # 截图键位 grim | wl-copy 仍要用到
     grim
     slurp # 截图
     playerctl

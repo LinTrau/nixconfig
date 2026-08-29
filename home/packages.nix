@@ -16,10 +16,10 @@
     telegram-desktop
     tmux
     gimp
+    vscode
     prismlauncher
     osu-lazer-bin
     adwsteamgtk
-    swaybg
     uwsm
     wlsunset
     file-roller
@@ -27,7 +27,6 @@
     protonplus
     splayer
     wemeet
-    bitwig-studio3
     scilab-bin
     #openfoam-org
     paraview
@@ -36,10 +35,9 @@
     element-desktop
     scrcpy
     thunderbird
+    mpris
 
     # 主题
-    sweet
-    sweet-nova
 
     # KDE 应用
     kdePackages.yakuake

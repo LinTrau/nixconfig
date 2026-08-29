@@ -1,15 +1,17 @@
 # Home Manager 配置入口
 # 各功能模块位于 ./home/ 目录下
 
-{ ... }:
+{ inputs, ... }:
 
 {
   imports = [
+    inputs.noctalia.homeModules.default
+
     ./home/packages.nix
     ./home/git.nix
     ./home/zsh.nix
     ./home/yakuake.nix
-    ./home/niri # 新增，会自动带上 waybar 和 fuzzel
+    ./home/niri # 顶栏/启动器/通知/会话/壁纸/锁屏统一由 noctalia 提供
     ./home/kitty.nix
   ];
 
