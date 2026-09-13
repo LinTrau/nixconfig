@@ -28,7 +28,21 @@
   xdg.portal = {
     enable = true;
     wlr.enable = true;
-    extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+    extraPortals = with pkgs; [
+      xdg-desktop-portal-gtk
+      xdg-desktop-portal-gnome
+    ];
+    config.niri = {
+      default = [
+        "gnome"
+        "gtk"
+      ];
+      "org.freedesktop.impl.portal.ScreenCast" = [ "gnome" ];
+      "org.freedesktop.impl.portal.Screenshot" = [ "gnome" ];
+    };
+    # xdg-desktop-portal 1.17 起需要显式指定后端加载方式；这里保持 <1.17 的
+    # "取 lexicographical 顺序第一个支持该接口的后端" 行为，抑制相关警告。
+    config.common.default = "*";
   };
 
   programs.dconf.enable = true; # GTK 应用读取主题需要

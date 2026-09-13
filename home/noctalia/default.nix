@@ -49,10 +49,10 @@
           ];
           center = [ "clock" ];
           end = [
-            "volume"
-            "media"
+            "h465855hgg/lyrics:lyrics"
             "network"
             "battery"
+            "volume"
             "tray"
             "notifications"
             "control-center"
@@ -65,6 +65,12 @@
         clock = {
           format = "  {:%H:%M}  {:%m-%d}"; # 数码管风格间距，同原 waybar clock
         };
+      };
+
+      # 社区歌词插件（播放时自动显示同步歌词）
+      plugins = {
+        enabled = [ "h465855hgg/lyrics" ];
+        auto_update = "all";
       };
     };
 

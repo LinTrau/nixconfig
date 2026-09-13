@@ -37,6 +37,9 @@
     nvidia-container-toolkit.enable = true;
   };
 
+  # 注册 NVIDIA 驱动（niri/容器工具链/nvidia-container-toolkit 都需要）；不启用完整 X server
+  services.xserver.videoDrivers = [ "nvidia" ];
+
   virtualisation = {
     docker = {
       daemon.settings.features.cdi = true;

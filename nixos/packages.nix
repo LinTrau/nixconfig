@@ -22,6 +22,9 @@
     quota
     rclone
     distrobox
+    cargo
+    julia
+    chromium
     python3
     nodejs
 

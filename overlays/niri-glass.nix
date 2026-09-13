@@ -19,8 +19,8 @@ let
   niriGlassSrc = prev.fetchFromGitHub {
     owner = "zaroutt";
     repo = "Niri-glass";
-    rev = "main"; # 建议换成具体 commit hash，避免上游一动你就要重新打补丁
-    sha256 = "sha256-Dnwpynodfn1BmIvc+iXUGy55fm5Uootb6sD5LspDsQc="; # 见上方说明，首次构建后填入真实 hash
+    rev = "147c35b0c328220fb60e5fd184a2a8bdf17bebeb"; # 锁定具体 commit，避免上游 main 一动就要重新打补丁
+    sha256 = "sha256-0Mcq5cH2A7HPgMc8aAxy4M+XhZ1ps/ZMlUWWkKsrcC4=";
   };
 in
 {
