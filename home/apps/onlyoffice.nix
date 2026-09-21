@@ -1,4 +1,4 @@
-# home/onlyoffice.nix
+# home/apps/onlyoffice.nix
 # OnlyOffice Desktop（buildFHSEnv 沙箱）不读系统字体，只认「自带字体 + ~/.fonts 里的真实文件」。
 # 实测：~/.fonts 里的真实文件(Roboto/CustomTkinter)会出现在字体列表；软链进去的不显示。
 #   * 系统字体(/run/current-system/sw/share/fonts) 它看不到

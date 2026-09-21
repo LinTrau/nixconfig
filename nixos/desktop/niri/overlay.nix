@@ -1,4 +1,4 @@
-# overlays/niri-glass.nix
+# nixos/desktop/niri/overlay.nix
 #
 # 把官方 niri 包"打补丁"成带液态玻璃 (liquid-glass) 效果的版本。
 # 原理：zaroutt/Niri-glass 不是主题文件，而是对 niri 编译器源码的几个文件的替换

@@ -2,6 +2,10 @@
 { pkgs, ... }:
 
 {
+  imports = [
+    ./nvidia.nix # nvidia-offload 启动包装脚本
+  ];
+
   hardware = {
     enableAllFirmware = true;
 

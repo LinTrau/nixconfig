@@ -1,30 +1,41 @@
 # NixOS 系统配置入口
-# 各功能模块位于 ./nixos/ 目录下
+# 各功能模块位于 ./nixos/ 目录下，按职责分目录：
+#   boot/      引导与内核
+#   hardware/  自动生成的硬件描述 + 驱动 / GPU / 虚拟化
+#   security/  账户与提权
+#   desktop/   桌面会话（niri / noctalia）
+#   programs/  本地化与系统级软件包
 # 运行 `nixos-rebuild switch --flake .#Scil-nixos` 以应用更改
 
 { ... }:
 
 {
   imports = [
-    ./hardware-configuration.nix
+    ./nixos/hardware/configuration.nix
 
     # 系统子模块
-    ./nixos/boot.nix
-    ./nixos/hardware.nix
+    ./nixos/boot
+    ./nixos/hardware
     ./nixos/network.nix
-    ./nixos/locale.nix
+    ./nixos/programs/locale.nix
     ./nixos/audio.nix
     ./nixos/fonts.nix
-    ./nixos/users.nix
+    ./nixos/security/users.nix
     ./nixos/programs.nix
     ./nixos/services.nix
     ./nixos/plasma.nix
-    ./nixos/packages.nix
-    ./nixos/niri.nix
+    ./nixos/programs/packages.nix
+
+    # 桌面会话（液态玻璃 niri + noctalia 相关系统侧配置）
+    ./nixos/desktop
+
+    # 由 flake.nix 抽出的第三方接线模块
+    ./nixos/boot/lanzaboote.nix # lanzaboote Secure Boot
+    ./nixos/programs/nur.nix # NUR 仓库字体
   ];
 
   nixpkgs.overlays = [
-    (import ./overlays/niri-glass.nix) # 新增：注册液态玻璃版 niri
+    (import ./nixos/desktop/niri/overlay.nix) # 新增：注册液态玻璃版 niri
   ];
 
   nix.settings = {

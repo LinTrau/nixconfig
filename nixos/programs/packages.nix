@@ -1,4 +1,5 @@
 # 系统级软件包
+# 注：nvidia-offload 包装脚本已移到 ../hardware/nvidia.nix
 { pkgs, ... }:
 
 {
@@ -27,15 +28,5 @@
     chromium
     python3
     nodejs
-
-    (writeShellScriptBin "nvidia-offload" ''
-      #!/usr/bin/env bash
-      export __NV_PRIME_RENDER_OFFLOAD=1
-      export __NV_PRIME_RENDER_OFFLOAD_PROVIDER=NVIDIA-G0
-      export __GLX_VENDOR_LIBRARY_NAME=nvidia
-      export __VK_LAYER_NV_optimus=NVIDIA_only
-      exec "$@"
-    '')
-
   ];
 }

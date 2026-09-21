@@ -69,6 +69,8 @@
 
   };
 
+  # 接线入口：这里只绑定 flake 输入与主机，
+  # 系统模块在 ./configuration.nix，用户模块在 ./home.nix。
   outputs =
     inputs@{
       self,
@@ -101,18 +103,9 @@
               home-manager.extraSpecialArgs = { inherit inputs; };
             }
 
+            # 模块定义在这里 import，配置内容见对应模块文件
             lanzaboote.nixosModules.lanzaboote
-            (
-              { pkgs, lib, ... }:
-              {
-                environment.systemPackages = [ pkgs.sbctl ];
-                boot.loader.systemd-boot.enable = lib.mkForce false;
-                boot.lanzaboote = {
-                  enable = true;
-                  pkiBundle = "/var/lib/sbctl";
-                };
-              }
-            )
+            nur.modules.nixos.default
 
             # 外部 flake 软件包
             (
@@ -123,18 +116,6 @@
                   zen-browser.packages."x86_64-linux".default
                   inputs.dsh-nix.packages.${pkgs.stdenv.hostPlatform.system}.deepseek-harness
 
-                ];
-              }
-            )
-
-            # NUR
-            nur.modules.nixos.default
-            (
-              { pkgs, ... }:
-              {
-                fonts.packages = [
-                  pkgs.nur.repos.rewine.ttf-wps-fonts
-                  pkgs.nur.repos.rewine.ttf-ms-win10
                 ];
               }
             )

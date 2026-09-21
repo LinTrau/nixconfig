@@ -1,4 +1,4 @@
-# home/kitty.nix
+# home/apps/kitty.nix
 { pkgs, ... }:
 
 {

@@ -1,4 +1,4 @@
-# home/noctalia/default.nix
+# home/desktop/noctalia/default.nix
 # Noctalia：统一顶栏 / 启动器 / 通知中心 / 会话菜单 / 壁纸 / 锁屏 / 剪贴板，
 # 取代原来的 waybar + fuzzel + wlogout + swaync + swaybg + swaylock + cliphist。
 # 配色沿用整套「磁带未来主义」主题：
@@ -7,6 +7,10 @@
 { pkgs, ... }:
 
 {
+  imports = [
+    ./module.nix
+  ];
+
   programs.noctalia = {
     enable = true;
 

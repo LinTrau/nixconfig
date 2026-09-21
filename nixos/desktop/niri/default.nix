@@ -1,15 +1,15 @@
-# nixos/niri.nix
+# nixos/desktop/niri/default.nix
 # 启用 niri（liquid-glass 补丁版）作为可选会话，与现有 Plasma 共存
 # 在登录管理器里可以自由切换，不影响你原来的 plasma.nix
 
 { pkgs, ... }:
 
 {
-  # 用 overlays/niri-glass.nix 提供的 niri-glass 包替换默认会话二进制
+  # 用 ./overlay.nix 提供的 niri-glass 包替换默认会话二进制
   environment.systemPackages = with pkgs; [
     niri-glass
     xwayland-satellite
-    # 启动器 / 通知 / 壁纸 / 锁屏 / 剪贴板统一由 noctalia 提供（见 home/noctalia）
+    # 启动器 / 通知 / 壁纸 / 锁屏 / 剪贴板统一由 noctalia 提供（见 home/desktop/noctalia）
     wl-clipboard # 截图键位 grim | wl-copy 仍要用到
     grim
     slurp # 截图

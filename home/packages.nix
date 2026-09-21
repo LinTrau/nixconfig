@@ -38,6 +38,7 @@
     thunderbird
     onlyoffice-desktopeditors
     kdePackages.okular
+    zotero
 
     # 主题
 

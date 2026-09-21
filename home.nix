@@ -1,18 +1,18 @@
 # Home Manager 配置入口（本文件必须放在仓库根目录，flake.nix 里用 `import ./home.nix` 引用它）
-# 各功能子模块位于 ./home/ 目录下
+# 各功能子模块位于 ./home/ 目录下，按职责分目录，与 ./nixos/ 对称：
+#   desktop/   桌面外观与会话助手（niri / noctalia）
+#   programs/  命令行程序配置（git / zsh）
+#   apps/      单个应用的适配（kitty / onlyoffice / hindsight）
 
-{ inputs, ... }:
+{ ... }:
 
 {
   imports = [
-    inputs.noctalia.homeModules.default
+    ./home/programs
+    ./home/desktop
+    ./home/apps
 
     ./home/packages.nix
-    ./home/git.nix
-    ./home/zsh.nix
-    ./home/niri # 顶栏/启动器/通知/会话/壁纸/锁屏统一由 noctalia 提供
-    ./home/kitty.nix
-    ./home/onlyoffice.nix # OnlyOffice 字体软链到 ~/.local/share/fonts
   ];
 
   home = {
