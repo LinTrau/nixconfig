@@ -6,6 +6,7 @@
   environment.systemPackages = with pkgs; [
     vim
     wget
+    curl
     gnupg
     git
     unrar
@@ -18,6 +19,7 @@
     winetricks
     blesh
     xsettingsd
+    pkg-config
     pinentry-qt
     usbutils
     quota
@@ -26,7 +28,22 @@
     cargo
     julia
     chromium
-    python3
     nodejs
+    cmake
+    ninja
+    gcc
+    gnumake
+    mission-center
+
+    cudaPackages.cudatoolkit
+    cudaPackages.cudnn
+
+    python3
+    python3Packages.pip
+    python3Packages.virtualenv
   ];
+
+  environment.variables = {
+    CUDA_PATH = "${pkgs.cudaPackages.cudatoolkit}";
+  };
 }

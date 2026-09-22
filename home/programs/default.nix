@@ -5,5 +5,7 @@
 {
   imports = [
     ./git.nix
+    ./nushell.nix
+    ./direnv.nix
   ];
 }

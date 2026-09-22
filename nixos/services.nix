@@ -1,5 +1,5 @@
 # 系统服务配置
-{ ... }:
+{ pkgs, ... }:
 
 {
   services = {
@@ -35,5 +35,20 @@
 
     # UPower：noctalia 的 battery 组件靠它读电池（org.freedesktop.UPower D-Bus 服务）
     upower.enable = true;
+
+    xserver.videoDrivers = [ "nvidia" ];
+
+    ollama = {
+      enable = true;
+      # nixpkgs 较新版本已弃用 services.ollama.acceleration，
+      # 改为显式指定带 CUDA 支持的包（等价于原来的 acceleration = "cuda"）。
+      package = pkgs.ollama-cuda;
+      environmentVariables = {
+        OLLAMA_FLASH_ATTENTION = "1";
+        OLLAMA_KV_CACHE_TYPE = "q8_0";
+        OLLAMA_CONTEXT_LENGTH = "32768";
+        OLLAMA_KEEP_ALIVE = "30m";
+      };
+    };
   };
 }

@@ -6,12 +6,17 @@
 #   ~/.hindsight/hindsight-daemon-service.sh
 #   ~/.config/systemd/user/hindsight.service
 #
-# 密钥不写入 Nix store：启动时从 ~/.dsh/.credentials.yaml 读取 DEEPSEEK_API_KEY。
+# 2026-09-22 起 LLM 走本机 ollama（gemma4:12b），embedding 走 ollama 的 qwen3-emb-8k（litellm SDK 直连）。
+# 此前依次为：DeepSeek 官方 API（后台烧钱，已弃）→ 智谱免费 glm-4.7-flash（429 拥挤）。
+# 密钥不再需要；~/.config/hindsight/llm.env 保留但 ollama 模式下不使用。
 { pkgs, ... }:
 
 let
   hindsightDaemon = pkgs.writeShellApplication {
     name = "hindsight-daemon";
+    # shellcheck 会对下面第 40 行动态路径的 `source` 报 SC1091；
+    # writeShellApplication 把 SC1091 当致命错误，这里显式豁免（运行期路径本就无法静态检查）。
+    excludeShellChecks = [ "SC1091" ];
     runtimeInputs = with pkgs; [
       uv
       steam-run
@@ -22,13 +27,20 @@ let
       coreutils
     ];
     text = ''
-      export HINDSIGHT_API_LLM_PROVIDER="''${HINDSIGHT_API_LLM_PROVIDER:-deepseek}"
-      export HINDSIGHT_API_LLM_MODEL="''${HINDSIGHT_API_LLM_MODEL:-deepseek-flash}"
+      export HINDSIGHT_API_LLM_PROVIDER="''${HINDSIGHT_API_LLM_PROVIDER:-ollama}"
+      export HINDSIGHT_API_LLM_MODEL="''${HINDSIGHT_API_LLM_MODEL:-gemma4:12b}"
+      export HINDSIGHT_API_LLM_BASE_URL="''${HINDSIGHT_API_LLM_BASE_URL:-http://127.0.0.1:11434/v1}"
+      # embedding 走本机 ollama 的 litellm SDK 直连(不再用本地 CUDA 模型,绕开 steam-run 沙箱 GPU 问题)
+      export HINDSIGHT_API_EMBEDDINGS_PROVIDER="''${HINDSIGHT_API_EMBEDDINGS_PROVIDER:-litellm-sdk}"
+      export HINDSIGHT_API_EMBEDDINGS_LITELLM_SDK_MODEL="''${HINDSIGHT_API_EMBEDDINGS_LITELLM_SDK_MODEL:-openai/qwen3-emb-8k}"
+      export HINDSIGHT_API_EMBEDDINGS_LITELLM_SDK_API_BASE="''${HINDSIGHT_API_EMBEDDINGS_LITELLM_SDK_API_BASE:-http://127.0.0.1:11434/v1}"
+      # litellm 的 openai/ 前缀强制要求 api_key,占位即可(ollama 不校验)
+      export HINDSIGHT_API_EMBEDDINGS_LITELLM_SDK_API_KEY="''${HINDSIGHT_API_EMBEDDINGS_LITELLM_SDK_API_KEY:-ollama}"
       export HINDSIGHT_API_PORT="''${HINDSIGHT_API_PORT:-9077}"
 
-      # 从 dsh 凭据文件读取 DeepSeek key（若未显式提供）
-      if [ -z "''${HINDSIGHT_API_LLM_API_KEY:-}" ]; then
-        HINDSIGHT_API_LLM_API_KEY="$(grep -oP 'DEEPSEEK_API_KEY:\s*\K.*' "$HOME/.dsh/.credentials.yaml" 2>/dev/null | head -1 || true)"
+      # 从 ~/.config/hindsight/llm.env 读取智谱 key（若未显式提供；密钥不写入 Nix store）
+      if [ -z "''${HINDSIGHT_API_LLM_API_KEY:-}" ] && [ -f "$HOME/.config/hindsight/llm.env" ]; then
+        . "$HOME/.config/hindsight/llm.env"
         export HINDSIGHT_API_LLM_API_KEY
       fi
 
@@ -74,8 +86,13 @@ in
       # daemon 本身有 --idle-timeout 0，这里给足冷启动时间
       TimeoutStartSec = 300;
       Environment = [
-        "HINDSIGHT_API_LLM_PROVIDER=deepseek"
-        "HINDSIGHT_API_LLM_MODEL=deepseek-flash"
+        "HINDSIGHT_API_LLM_PROVIDER=ollama"
+        "HINDSIGHT_API_LLM_MODEL=gemma4:12b"
+        "HINDSIGHT_API_LLM_BASE_URL=http://127.0.0.1:11434/v1"
+        "HINDSIGHT_API_EMBEDDINGS_PROVIDER=litellm-sdk"
+        "HINDSIGHT_API_EMBEDDINGS_LITELLM_SDK_MODEL=openai/qwen3-emb-8k"
+        "HINDSIGHT_API_EMBEDDINGS_LITELLM_SDK_API_BASE=http://127.0.0.1:11434/v1"
+        "HINDSIGHT_API_EMBEDDINGS_LITELLM_SDK_API_KEY=ollama"
         "HINDSIGHT_API_PORT=9077"
       ];
     };

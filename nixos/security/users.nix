@@ -5,7 +5,7 @@
   users.users.scil = {
     isNormalUser = true;
     description = "scil";
-    shell = pkgs.zsh;
+    shell = pkgs.nushell; # 全系统统一用 nushell（原 zsh 已移除）
     extraGroups = [
       "networkmanager"
       "wheel"
