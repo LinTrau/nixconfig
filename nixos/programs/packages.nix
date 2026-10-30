@@ -34,6 +34,7 @@
     gcc
     gnumake
     mission-center
+    dnsutils
 
     cudaPackages.cudatoolkit
     cudaPackages.cudnn

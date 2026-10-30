@@ -61,6 +61,11 @@
   programs.nushell = {
     enable = true;
 
+    # 26.11 起该选项默认值从 false 变成 true；home.stateVersion 仍是 25.05，
+    # 不显式写就会一直报 evaluation warning。这里显式固定为当前（旧）行为；
+    # 想改用新默认时改成 true 再 rebuild 一次即可。
+    loadSessionVariables = false;
+
     # nushell 用 $env.config 这一个嵌套记录来配置；home-manager 会把下面的键
     # 逐条展开成 $env.config.<键路径> = <值>
     settings = {

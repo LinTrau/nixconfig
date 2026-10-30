@@ -44,6 +44,18 @@
       "flakes"
     ];
     auto-optimise-store = true;
+
+    # 原来写在 flake.nix 的 nixConfig 里，只有 trusted user 才生效，
+    # 非 root 跑 nix 会报 "ignoring untrusted flake configuration setting"。
+    # 搬到 nix.settings 后是系统级声明式配置，所有用户都能用这两个 cache。
+    extra-substituters = [
+      "https://comfyui.cachix.org"
+      "https://nix-community.cachix.org"
+    ];
+    extra-trusted-public-keys = [
+      "comfyui.cachix.org-1:33mf9VzoIjzVbp0zwj+fT51HG0y31ZTK3nzYZAX0rec="
+      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+    ];
   };
 
   nixpkgs.config = {

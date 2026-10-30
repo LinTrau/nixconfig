@@ -38,7 +38,8 @@
     thunderbird
     onlyoffice-desktopeditors
     kdePackages.okular
-    zotero
+    folia-major
+    pnpm
 
     # 主题
 

@@ -1,20 +1,11 @@
 {
   description = "ROG Flake";
 
-  nixConfig.extra-experimental-features = [
-    "flakes"
-    "nix-command"
-    "pipe-operators"
-  ];
-
-  nixConfig.extra-substituters = [
-    "https://comfyui.cachix.org"
-    "https://nix-community.cachix.org"
-  ];
-  nixConfig.extra-trusted-public-keys = [
-    "comfyui.cachix.org-1:33mf9VzoIjzVbp0zwj+fT51HG0y31ZTK3nzYZAX0rec="
-    "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-  ];
+  # 注意：这里刻意不写 nixConfig。flake 里的 nixConfig 只有 trusted user 才会生效，
+  # 非 root 用户执行 nix 命令会一直报
+  # "ignoring untrusted flake configuration setting 'extra-substituters'"。
+  # 相关的 experimental-features / substituters 都搬到了 configuration.nix 的
+  # nix.settings 里（声明式，所有用户都生效）。
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
@@ -53,8 +44,8 @@
 
     nixGL.url = "github:nix-community/nixGL";
 
-    dsh-nix = {
-      url = "github:tsx8/dsh-nix";
+    llm-agents = {
+      url = "github:numtide/llm-agents.nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -81,7 +72,7 @@
       zen-browser,
       home-manager,
       lazyvim-nix,
-      dsh-nix,
+      llm-agents,
       ...
     }:
     {
@@ -114,8 +105,7 @@
                 environment.systemPackages = [
                   tinyMediaManager-flake.packages.${pkgs.stdenv.hostPlatform.system}.default
                   zen-browser.packages."x86_64-linux".default
-                  inputs.dsh-nix.packages.${pkgs.stdenv.hostPlatform.system}.deepseek-harness
-
+                  inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.dsh
                 ];
               }
             )

@@ -6,9 +6,11 @@
 #   ~/.hindsight/hindsight-daemon-service.sh
 #   ~/.config/systemd/user/hindsight.service
 #
-# 2026-09-22 起 LLM 走本机 ollama（gemma4:12b），embedding 走 ollama 的 qwen3-emb-8k（litellm SDK 直连）。
-# 此前依次为：DeepSeek 官方 API（后台烧钱，已弃）→ 智谱免费 glm-4.7-flash（429 拥挤）。
-# 密钥不再需要；~/.config/hindsight/llm.env 保留但 ollama 模式下不使用。
+# 2026-09-23 起 LLM 为故障转移链:主=本机 Bonsai（llama-server 跑 Ternary-Bonsai-2-27B,:8080）,
+# 备=智谱免费 glm-4.7-flash（open.bigmodel.cn,429 拥挤时由主承担）。embedding 走本机 embed-server（llama.cpp Qwen3-Embedding-0.6B，:8090，纯 CPU）。
+# 两者均为 systemd 服务,开机自启。此前依次为：DeepSeek 官方 API（后台烧钱,已弃）→ ollama gemma4:12b（与 Bonsai 抢显存）。
+# 2026-10-02：ollama 服务已整体移除——它只剩 3 个从未被调用的 embedding 模型，embedding 已由 embed-server 接管。
+# 密钥单一来源 /home/scil/bonsai/api-key.txt 与 llm.env 内的智谱 key,经 ~/.config/hindsight/llm.env 动态读取,不写入 Nix store。
 { pkgs, ... }:
 
 let
@@ -27,21 +29,21 @@ let
       coreutils
     ];
     text = ''
-      export HINDSIGHT_API_LLM_PROVIDER="''${HINDSIGHT_API_LLM_PROVIDER:-ollama}"
-      export HINDSIGHT_API_LLM_MODEL="''${HINDSIGHT_API_LLM_MODEL:-gemma4:12b}"
-      export HINDSIGHT_API_LLM_BASE_URL="''${HINDSIGHT_API_LLM_BASE_URL:-http://127.0.0.1:11434/v1}"
-      # embedding 走本机 ollama 的 litellm SDK 直连(不再用本地 CUDA 模型,绕开 steam-run 沙箱 GPU 问题)
+      export HINDSIGHT_API_LLM_PROVIDER="''${HINDSIGHT_API_LLM_PROVIDER:-openai}"
+      export HINDSIGHT_API_LLM_MODEL="''${HINDSIGHT_API_LLM_MODEL:-bonsai-2-27b}"
+      export HINDSIGHT_API_LLM_BASE_URL="''${HINDSIGHT_API_LLM_BASE_URL:-http://127.0.0.1:8080/v1}"
+      # embedding 走 embed-server 的 litellm SDK 直连(纯 CPU llama.cpp,不占显存、绕开 steam-run 沙箱 GPU 问题)
       export HINDSIGHT_API_EMBEDDINGS_PROVIDER="''${HINDSIGHT_API_EMBEDDINGS_PROVIDER:-litellm-sdk}"
-      export HINDSIGHT_API_EMBEDDINGS_LITELLM_SDK_MODEL="''${HINDSIGHT_API_EMBEDDINGS_LITELLM_SDK_MODEL:-openai/qwen3-emb-8k}"
-      export HINDSIGHT_API_EMBEDDINGS_LITELLM_SDK_API_BASE="''${HINDSIGHT_API_EMBEDDINGS_LITELLM_SDK_API_BASE:-http://127.0.0.1:11434/v1}"
-      # litellm 的 openai/ 前缀强制要求 api_key,占位即可(ollama 不校验)
+      export HINDSIGHT_API_EMBEDDINGS_LITELLM_SDK_MODEL="''${HINDSIGHT_API_EMBEDDINGS_LITELLM_SDK_MODEL:-openai/qwen3-embed}"
+      export HINDSIGHT_API_EMBEDDINGS_LITELLM_SDK_API_BASE="''${HINDSIGHT_API_EMBEDDINGS_LITELLM_SDK_API_BASE:-http://172.17.0.1:8090/v1}"
+      # litellm 的 openai/ 前缀强制要求 api_key,占位即可(embed-server 不校验)
       export HINDSIGHT_API_EMBEDDINGS_LITELLM_SDK_API_KEY="''${HINDSIGHT_API_EMBEDDINGS_LITELLM_SDK_API_KEY:-ollama}"
       export HINDSIGHT_API_PORT="''${HINDSIGHT_API_PORT:-9077}"
 
-      # 从 ~/.config/hindsight/llm.env 读取智谱 key（若未显式提供；密钥不写入 Nix store）
-      if [ -z "''${HINDSIGHT_API_LLM_API_KEY:-}" ] && [ -f "$HOME/.config/hindsight/llm.env" ]; then
+      # 从 ~/.config/hindsight/llm.env 读取全部密钥（主 Bonsai + 备用智谱；密钥不写入 Nix store）
+      if [ -f "$HOME/.config/hindsight/llm.env" ]; then
         . "$HOME/.config/hindsight/llm.env"
-        export HINDSIGHT_API_LLM_API_KEY
+        export HINDSIGHT_API_LLM_API_KEY HINDSIGHT_API_LLM_1_API_KEY HINDSIGHT_API_LLM_2_API_KEY HINDSIGHT_API_EMBEDDINGS_LITELLM_SDK_API_KEY
       fi
 
       # 取最近修改的 hindsight-api（uv 缓存里可能有多个历史版本，旧的会静默退出）
@@ -76,7 +78,8 @@ in
     Unit = {
       Description = "Hindsight self-hosted memory daemon (coding-agent)";
       Documentation = [ "https://hindsight.vectorize.io" ];
-      After = [ "network.target" ];
+      # embed-server 是 embedding 硬依赖(启动期初始化,缺了会崩溃循环);bonsai 是 LLM 兜底成员
+      After = [ "network.target" "embed-server.service" "bonsai.service" ];
     };
     Service = {
       Type = "simple";
@@ -86,13 +89,27 @@ in
       # daemon 本身有 --idle-timeout 0，这里给足冷启动时间
       TimeoutStartSec = 300;
       Environment = [
-        "HINDSIGHT_API_LLM_PROVIDER=ollama"
-        "HINDSIGHT_API_LLM_MODEL=gemma4:12b"
-        "HINDSIGHT_API_LLM_BASE_URL=http://127.0.0.1:11434/v1"
+        "HINDSIGHT_API_LLM_PROVIDER=openai"
+        "HINDSIGHT_API_LLM_MODEL=glm-4.7-flashX"
+        "HINDSIGHT_API_LLM_BASE_URL=https://open.bigmodel.cn/api/paas/v4"
+        "HINDSIGHT_API_LLM_EXTRA_BODY='{\"thinking\":{\"type\":\"disabled\"}}'"
+        "HINDSIGHT_API_LLM_MAX_CONCURRENT=1"
+        "HINDSIGHT_API_LLM_REASONING_EFFORT=low"
+        "HINDSIGHT_API_REFLECT_MAX_CONTEXT_TOKENS=12000"
         "HINDSIGHT_API_EMBEDDINGS_PROVIDER=litellm-sdk"
-        "HINDSIGHT_API_EMBEDDINGS_LITELLM_SDK_MODEL=openai/qwen3-emb-8k"
-        "HINDSIGHT_API_EMBEDDINGS_LITELLM_SDK_API_BASE=http://127.0.0.1:11434/v1"
-        "HINDSIGHT_API_EMBEDDINGS_LITELLM_SDK_API_KEY=ollama"
+        "HINDSIGHT_API_EMBEDDINGS_LITELLM_SDK_MODEL=openai/qwen3-embed"
+        "HINDSIGHT_API_EMBEDDINGS_LITELLM_SDK_API_BASE=http://172.17.0.1:8090/v1"
+        "HINDSIGHT_API_LLM_TIMEOUT=300"
+        "HINDSIGHT_API_LLM_STRATEGY='{\"mode\":\"failover\"}'"
+        "HINDSIGHT_API_LLM_1_PROVIDER=openai"
+        "HINDSIGHT_API_LLM_1_MODEL=glm-4.7-flash"
+        "HINDSIGHT_API_LLM_1_BASE_URL=https://open.bigmodel.cn/api/paas/v4"
+        "HINDSIGHT_API_LLM_1_EXTRA_BODY='{\"thinking\":{\"type\":\"disabled\"}}'"
+        "HINDSIGHT_API_LLM_2_PROVIDER=openai"
+        "HINDSIGHT_API_LLM_2_MODEL=bonsai-2-27b"
+        "HINDSIGHT_API_LLM_2_BASE_URL=http://127.0.0.1:8080/v1"
+        "HINDSIGHT_API_REFLECT_WALL_TIMEOUT=1800"
+        "HINDSIGHT_API_REFLECT_LLM_TIMEOUT=600"
         "HINDSIGHT_API_PORT=9077"
       ];
     };
