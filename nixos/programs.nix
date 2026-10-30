@@ -92,8 +92,6 @@
     virt-manager.enable = true;
   };
 
-  services.gvfs.enable = true;
-
   environment = {
     # 登记到 /etc/shells，否则 PAM 的 pam_shells / chsh 会拒绝 nushell
     shells = [ pkgs.nushell ];

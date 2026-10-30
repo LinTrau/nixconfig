@@ -26,5 +26,8 @@
 
     # noctalia 的电池组件靠 UPower 读电量
     upower.enable = true;
+
+    gvfs.enable = true;
+
   };
 }

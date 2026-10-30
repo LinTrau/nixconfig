@@ -48,6 +48,13 @@
       kdiff3
       kdePackages.sweeper
       kdePackages.ksystemlog
+
+      # dsh web login
+      (writeShellScriptBin "dsh-qr" ''
+        url="$(journalctl --user -u dsh-web | grep -o 'http[^ ]*token=[^ ]*' | tail -1)"
+        echo "$url"
+        ${pkgs.qrencode}/bin/qrencode -t ANSIUTF8 "$url"
+      '')
     ];
 
     sessionVariables = {
