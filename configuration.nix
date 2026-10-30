@@ -1,80 +1,63 @@
-# NixOS 系统配置入口
-# 各功能模块位于 ./nixos/ 目录下，按职责分目录：
-#   boot/      引导与内核
-#   hardware/  自动生成的硬件描述 + 驱动 / GPU / 虚拟化
-#   security/  账户与提权
-#   desktop/   桌面会话（niri / noctalia）
-#   programs/  本地化与系统级软件包
-# 运行 `nixos-rebuild switch --flake .#Scil-nixos` 以应用更改
+# NixOS 系统配置入口，模块按职责分文件：
+#   boot.nix      引导 / 内核 / Secure Boot
+#   hardware.nix  硬件描述 / 文件系统 / 驱动 / 虚拟化
+#   security.nix  账户 / doas / polkit
+#   programs.nix  本地化 / 系统级程序与软件包
+#   desktop/      登录器与 niri 会话（系统侧）
+# 应用：nixos-rebuild switch --flake .#Scil-nixos
 
 { ... }:
 
 {
   imports = [
-    ./nixos/hardware/configuration.nix
-
-    # 系统子模块
-    ./nixos/boot
-    ./nixos/hardware
+    ./nixos/boot.nix
+    ./nixos/hardware.nix
     ./nixos/network.nix
-    ./nixos/programs/locale.nix
+    ./nixos/programs.nix
     ./nixos/audio.nix
     ./nixos/fonts.nix
-    ./nixos/security/users.nix
-    ./nixos/programs.nix
+    ./nixos/security.nix
     ./nixos/services.nix
-    ./nixos/plasma.nix
-    ./nixos/programs/packages.nix
 
-    # 桌面会话（液态玻璃 niri + noctalia 相关系统侧配置）
-    ./nixos/desktop
-
-    # 由 flake.nix 抽出的第三方接线模块
-    ./nixos/boot/lanzaboote.nix # lanzaboote Secure Boot
-    ./nixos/programs/nur.nix # NUR 仓库字体
+    ./nixos/desktop/greetd.nix
+    ./nixos/desktop/niri
   ];
 
-  nixpkgs.overlays = [
-    (import ./nixos/desktop/niri/overlay.nix) # 新增：注册液态玻璃版 niri
-  ];
+  nix = {
+    settings = {
+      experimental-features = [
+        "nix-command"
+        "flakes"
+      ];
+      auto-optimise-store = true;
 
-  nix.settings = {
-    experimental-features = [
-      "nix-command"
-      "flakes"
-    ];
-    auto-optimise-store = true;
+      # 写在系统配置里才对所有用户生效（flake 的 nixConfig 只对 trusted user 有效）
+      extra-substituters = [
+        "https://comfyui.cachix.org"
+        "https://nix-community.cachix.org"
+      ];
+      extra-trusted-public-keys = [
+        "comfyui.cachix.org-1:33mf9VzoIjzVbp0zwj+fT51HG0y31ZTK3nzYZAX0rec="
+        "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+      ];
+    };
 
-    # 原来写在 flake.nix 的 nixConfig 里，只有 trusted user 才生效，
-    # 非 root 跑 nix 会报 "ignoring untrusted flake configuration setting"。
-    # 搬到 nix.settings 后是系统级声明式配置，所有用户都能用这两个 cache。
-    extra-substituters = [
-      "https://comfyui.cachix.org"
-      "https://nix-community.cachix.org"
-    ];
-    extra-trusted-public-keys = [
-      "comfyui.cachix.org-1:33mf9VzoIjzVbp0zwj+fT51HG0y31ZTK3nzYZAX0rec="
-      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-    ];
+    gc = {
+      automatic = true;
+      dates = "weekly";
+      options = "--delete-older-than 30d";
+    };
+
+    optimise = {
+      automatic = true;
+      dates = [ "weekly" ];
+    };
   };
 
   nixpkgs.config = {
     allowUnfree = true;
-    permittedInsecurePackages = [
-      "electron-39.8.10"
-    ];
+    permittedInsecurePackages = [ "electron-39.8.10" ];
   };
 
   system.stateVersion = "25.05";
-
-  nix.gc = {
-    automatic = true;
-    dates = "weekly";
-    options = "--delete-older-than 30d";
-  };
-
-  nix.optimise = {
-    automatic = true;
-    dates = [ "weekly" ];
-  };
 }

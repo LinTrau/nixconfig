@@ -1,9 +1,38 @@
-# 系统级程序配置
+# 系统级程序、本地化与软件包
 { pkgs, ... }:
 
 {
+  time.timeZone = "Asia/Shanghai";
+
+  i18n = {
+    defaultLocale = "zh_CN.UTF-8";
+
+    extraLocaleSettings = {
+      LC_ADDRESS = "zh_CN.UTF-8";
+      LC_IDENTIFICATION = "zh_CN.UTF-8";
+      LC_MEASUREMENT = "zh_CN.UTF-8";
+      LC_MONETARY = "zh_CN.UTF-8";
+      LC_NAME = "zh_CN.UTF-8";
+      LC_NUMERIC = "zh_CN.UTF-8";
+      LC_PAPER = "zh_CN.UTF-8";
+      LC_TELEPHONE = "zh_CN.UTF-8";
+      LC_TIME = "zh_CN.UTF-8";
+    };
+
+    inputMethod = {
+      type = "fcitx5";
+      enable = true;
+      fcitx5.addons = with pkgs; [
+        fcitx5-gtk
+        kdePackages.fcitx5-qt
+        qt6Packages.fcitx5-chinese-addons
+        fcitx5-material-color
+        fcitx5-nord
+      ];
+    };
+  };
+
   programs = {
-    # nushell：全系统的交互 shell（zsh 已完全移除）
     nushell.enable = true;
 
     gnupg.agent = {
@@ -22,7 +51,6 @@
 
     xwayland.enable = true;
     kdeconnect.enable = true;
-
     gamemode.enable = true;
 
     steam = {
@@ -64,12 +92,53 @@
     virt-manager.enable = true;
   };
 
-  security.soteria.enable = true;
   services.gvfs.enable = true;
 
-  # 把 nushell 登记为「允许的登录 shell」。
-  # 必须显式登记：users.users.*.shell 只会进 systemPackages，不会自动进
-  # /etc/shells（systemShells 只包含它自己推导的项），而 PAM 的 pam_shells /
-  # chsh 会按 /etc/shells 校验，否则换 shell 会失败。
-  environment.shells = [ pkgs.nushell ];
+  environment = {
+    # 登记到 /etc/shells，否则 PAM 的 pam_shells / chsh 会拒绝 nushell
+    shells = [ pkgs.nushell ];
+
+    systemPackages = with pkgs; [
+      vim
+      wget
+      curl
+      gnupg
+      git
+      unrar
+      nvtopPackages.nvidia
+      noto-fonts
+      fira-code
+      lshw
+      asusctl
+      wineWow64Packages.waylandFull
+      winetricks
+      blesh
+      xsettingsd
+      pkg-config
+      pinentry-qt
+      usbutils
+      quota
+      rclone
+      distrobox
+      cargo
+      julia
+      chromium
+      nodejs
+      cmake
+      ninja
+      gcc
+      gnumake
+      mission-center
+      dnsutils
+
+      cudaPackages.cudatoolkit
+      cudaPackages.cudnn
+
+      python3
+      python3Packages.pip
+      python3Packages.virtualenv
+    ];
+
+    variables.CUDA_PATH = "${pkgs.cudaPackages.cudatoolkit}";
+  };
 }

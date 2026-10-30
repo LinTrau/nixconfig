@@ -1,4 +1,4 @@
-# 音频配置（PipeWire）
+# 音频（PipeWire）
 _:
 
 {

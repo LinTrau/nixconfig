@@ -1,4 +1,4 @@
-# 网络、防火墙与代理配置
+# 网络、防火墙与局域网统一入口（Caddy 反向代理）
 _:
 
 {
@@ -6,16 +6,10 @@ _:
     hostName = "Scil-nixos";
     networkmanager.enable = true;
 
-    # 这台机器是笔记本，会连公共 / 校园 WiFi，所以防火墙必须开。
-    # 之前 enable = false 时，下面这些本机服务对整个局域网裸奔：
-    #   7897 mihomo 混合代理、9097 mihomo 控制接口（无鉴权）、35495 mihomo
-    #   8080 bonsai llama-server、8099 Deep-Live-Cam webui、1716 kdeconnect
     firewall = {
       enable = true;
 
-      # 这些是虚拟网卡/隧道，里面的流量不再过过滤：
-      #   Mihomo / vnt-tun —— mihomo 的 tun 模式和 vnt 组网
-      #   docker0 / br-+  —— 容器访问宿主机端口（openlist 5244 是 docker 发布）
+      # mihomo 的 tun / docker 网桥内部流量不再过滤
       trustedInterfaces = [
         "Mihomo"
         "vnt-tun"
@@ -23,21 +17,47 @@ _:
         "br-+"
       ];
 
-      # mihomo 的 tun 会改写路由，严格 rpfilter 会把回包丢掉
+      # mihomo tun 会改写路由，严格 rpfilter 会丢回包
       checkReversePath = false;
 
-      # 只保留确认要从局域网访问的服务。想收紧就删掉对应行；
-      # 8099（Deep-Live-Cam，无鉴权）默认不开，需要手机/平板远程用时再取消注释。
       allowedTCPPorts = [
-        7897 # mihomo 混合代理（config.yaml 里 allow-lan: true）
-        8080 # bonsai llama-server（有 --api-key-file 鉴权）
+        7897 # mihomo 混合代理（allow-lan: true）
+        8080 # bonsai llama-server（有 api-key 鉴权）
         1716 # KDE Connect
-        8099 # Deep-Live-Cam wan-animate webui（gradio，无鉴权）
+        8099 # Deep-Live-Cam webui（gradio，无鉴权）
+        8443 # Caddy 局域网入口
       ];
       allowedUDPPorts = [
         7897 # mihomo UDP 转发（QUIC / DNS）
         1716 # KDE Connect
       ];
+    };
+  };
+
+  # 局域网统一入口：手机/平板访问 192.168.31.65:8443，由 Caddy 转到只监听
+  # 127.0.0.1 的各 web UI，后端不直接暴露。新增服务复制一个 virtualHosts 条目，
+  # 并把端口加进上面的 allowedTCPPorts。
+  services.caddy = {
+    enable = true;
+
+    globalConfig = ''
+      admin off
+      persist_config off
+    '';
+
+    virtualHosts = {
+      # 冒号开头 = 只在 :8443 上做 HTTP 虚拟主机，不启用自动 HTTPS
+      ":8443" = {
+        extraConfig = ''
+          @notlan not remote_ip 127.0.0.1 192.168.31.0/24
+          respond @notlan "forbidden" 403
+
+          reverse_proxy 127.0.0.1:3080 {
+            # 必须保留原始 Host：DSH 的 /api 按 Host 判定来源，改写会全部 403
+            header_up Host {host}
+          }
+        '';
+      };
     };
   };
 }

@@ -1,30 +1,53 @@
-# nixos/desktop/niri/default.nix
-# 启用 niri（liquid-glass 补丁版）作为可选会话，与现有 Plasma 共存
-# 在登录管理器里可以自由切换，不影响你原来的 plasma.nix
-
+# niri 会话（liquid-glass 补丁版）：包、会话注册、portal
 { pkgs, ... }:
 
+let
+  # Niri-glass 不是主题，而是替换 niri 的几个渲染相关源文件，所以这里在 postPatch
+  # 阶段覆盖进 nixpkgs 的 niri 源码再编译。上游自称 vibe coded，nixpkgs 的 niri
+  # 版本差太多时 render_helpers/*.rs 可能对不上内部 API，届时锁 niri 版本。
+  niriGlassSrc = pkgs.fetchFromGitHub {
+    owner = "zaroutt";
+    repo = "Niri-glass";
+    rev = "147c35b0c328220fb60e5fd184a2a8bdf17bebeb";
+    sha256 = "sha256-0Mcq5cH2A7HPgMc8aAxy4M+XhZ1ps/ZMlUWWkKsrcC4=";
+  };
+
+  niriGlassOverlay = final: prev: {
+    niri-glass = prev.niri.overrideAttrs (old: {
+      pname = "niri-glass";
+
+      postPatch = (old.postPatch or "") + ''
+        echo "==> applying liquid-glass patch from zaroutt/Niri-glass"
+        cp -f ${niriGlassSrc}/src/render_helpers/liquid_glass.rs      src/render_helpers/liquid_glass.rs
+        cp -f ${niriGlassSrc}/src/render_helpers/background_effect.rs src/render_helpers/background_effect.rs
+        cp -f ${niriGlassSrc}/src/render_helpers/framebuffer_effect.rs src/render_helpers/framebuffer_effect.rs
+        cp -f ${niriGlassSrc}/src/render_helpers/xray.rs              src/render_helpers/xray.rs
+        cp -f ${niriGlassSrc}/src/render_helpers/mod.rs               src/render_helpers/mod.rs
+        cp -f ${niriGlassSrc}/src/render_helpers/shaders/mod.rs       src/render_helpers/shaders/mod.rs
+        mkdir -p src/render_helpers/shaders
+        cp -f ${niriGlassSrc}/src/render_helpers/shaders/clipped_surface.frag \
+              src/render_helpers/shaders/clipped_surface.frag
+        cp -f ${niriGlassSrc}/niri-config/src/appearance.rs niri-config/src/appearance.rs
+      '';
+    });
+  };
+in
 {
-  # 用 ./overlay.nix 提供的 niri-glass 包替换默认会话二进制
+  nixpkgs.overlays = [ niriGlassOverlay ];
+
   environment.systemPackages = with pkgs; [
     niri-glass
     xwayland-satellite
-    # 启动器 / 通知 / 壁纸 / 锁屏 / 剪贴板统一由 noctalia 提供（见 home/desktop/noctalia）
-    wl-clipboard # 截图键位 grim | wl-copy 仍要用到
+    wl-clipboard
     grim
-    slurp # 截图
+    slurp
     playerctl
     brightnessctl
   ];
 
-  # niri 需要的 session 文件；nixpkgs 的 niri 模块通常会自动注册
-  # .desktop，但因为我们换成了自定义派生 niri-glass，这里手动补一份，
-  # 避免登录界面里看不到它。
+  # 自定义派生换了 pname，nixpkgs 的 niri 模块不会自动注册会话，这里手动补
   services.displayManager.sessionPackages = [ pkgs.niri-glass ];
 
-  # xwayland-satellite 之类 niri 常见依赖；greetd/gdm/sddm 任选，
-  # 这里假设你复用现有 Plasma 用的 sddm，不重复配置 display-manager。
-  security.polkit.enable = true;
   xdg.portal = {
     enable = true;
     wlr.enable = true;
@@ -40,10 +63,9 @@
       "org.freedesktop.impl.portal.ScreenCast" = [ "gnome" ];
       "org.freedesktop.impl.portal.Screenshot" = [ "gnome" ];
     };
-    # xdg-desktop-portal 1.17 起需要显式指定后端加载方式；这里保持 <1.17 的
-    # "取 lexicographical 顺序第一个支持该接口的后端" 行为，抑制相关警告。
+    # 保持 1.17 之前「取第一个支持该接口的后端」的行为，抑制告警
     config.common.default = "*";
   };
 
-  programs.dconf.enable = true; # GTK 应用读取主题需要
+  programs.dconf.enable = true;
 }

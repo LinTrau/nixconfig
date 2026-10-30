@@ -1,4 +1,4 @@
-# 字体配置
+# 字体（含 NUR 提供的 WPS / 微软字体）
 { pkgs, ... }:
 
 {
@@ -11,10 +11,10 @@
       wqy_zenhei
       hack-font
       source-code-pro
-      #jetbrains-mono
       lxgw-wenkai
-      # 微软简体中文补充字体：黑体(SimHei)/楷体(KaiTi)/仿宋(FangSong)/等线(DengXian)
       nur.repos.chillcicada.ttf-ms-win10-sc-sup
+      nur.repos.rewine.ttf-wps-fonts
+      nur.repos.rewine.ttf-ms-win10
       cascadia-code
     ];
 

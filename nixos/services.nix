@@ -1,4 +1,4 @@
-# 系统服务配置
+# 系统服务
 { ... }:
 
 {
@@ -8,14 +8,6 @@
     asusd.enable = true;
     fwupd.enable = true;
     ratbagd.enable = true;
-
-    # xrdp：暂时禁用（X11 远程桌面，且默认走 startplasma-x11）。
-    # 如需远程访问：niri(Wayland) 环境建议用 wayvnc（VNC）；rustdesk 也可。
-    xrdp = {
-      enable = false;
-      defaultWindowManager = "startplasma-x11";
-      openFirewall = true;
-    };
 
     avahi = {
       enable = true;
@@ -30,12 +22,9 @@
     };
 
     flatpak.enable = true;
-
     envfs.enable = true;
 
-    # UPower：noctalia 的 battery 组件靠它读电池（org.freedesktop.UPower D-Bus 服务）
+    # noctalia 的电池组件靠 UPower 读电量
     upower.enable = true;
-
-    xserver.videoDrivers = [ "nvidia" ];
   };
 }
